@@ -12,18 +12,18 @@ const users = {}
 
 const handleMessage = (bytes, uuid) => {
   const message = JSON.parse(bytes.toString())
-//   console.log(`${username} connected`)   
+//   console.log(`${username} connected`)
   const user = users[uuid]
   user.state = message
   broadcast()
 
-  console.log(`${user.username} updated their updated state: ${JSON.stringify(user.state)}`)
+//   console.log(`${user.username} updated their updated state: ${JSON.stringify(user.state)}`)
 }
 
 const handleClose = uuid => {
-//   console.log(`${users[uuid].username} disconnected`)
-//   delete connections[uuid]
-//   delete users[uuid]
+  console.log(`${users[uuid].username} disconnected`)
+  delete connections[uuid]
+  delete users[uuid]
   broadcast()
 }
 
@@ -39,7 +39,7 @@ const broadcast = () => {
 
 wsServer.on('connection', (connection, request) => {
   const { username }  = url.parse(request.url, true).query
-//   console.log(`${username} connected`)
+  console.log(`${username} connected`)
   const uuid = uuidv4()
   connections[uuid] = connection
   users[uuid] = {
@@ -47,7 +47,7 @@ wsServer.on('connection', (connection, request) => {
     state: { }
   }
   connection.on('message', message => handleMessage(message, uuid));
-//   connection.on('close', () => handleClose(uuid));
+  connection.on('close', () => handleClose(uuid));
 });
 
 server.listen(port, () => {
